@@ -14,7 +14,6 @@ class CalculatorButton extends JButton {
         setContentAreaFilled(false);
         setForeground(Color.WHITE);
         setFont(new Font("Sans-Serif", Font.PLAIN, 20));
-        //setBorder(BorderFactory.createLineBorder(new Color(41,41,41)));
         setMargin(new Insets(0, 0, 0, 0));
         setRolloverEnabled(true);
         setColors();

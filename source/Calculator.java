@@ -207,31 +207,20 @@ public class Calculator {
     class SignButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
 
-            // If there are two values, change the sign of the second one
+            // If there are two values in the register, change the sign of the second one
             if (value2 != null) {
                 value2 = -value2;
 
                 // Format the value to remove unecessary decimal points and zeros
-                if (value2 % 1 == 0) {
-                    value2String = String.format("%.0f", value2);
-                } else {
-                    value2String = String.format("%.10f", value2);
-                    value2 = round(value2, 10);
-                    value2String = value2.toString();
-                }
+                formatValue(2);
                 display.setText(value2String);
             }
-            // If there's only one value, change the sign of first value
+            // If there's only one value in the register, change the sign of first value
             else if (value1 != null) {
                 value1 = -value1;
 
-                if (value1 % 1 == 0) {
-                    value1String = String.format("%.0f", value1);
-                } else {
-                    value1String = String.format("%.10f", value1);
-                    value1 = round(value1, 10);
-                    value1String = value1.toString();
-                }
+                // Format the value to remove unecessary decimal points and zeros
+                formatValue(1);
                 display.setText(value1String);
             }
         }
@@ -241,7 +230,7 @@ public class Calculator {
         public void actionPerformed(ActionEvent event) {
             Double newValue;
             
-            // If there are two values, add a decimal to the second value
+            // If there are two values in the register, add a decimal to the second value
             if (value2String != "") {
                 if (!value2String.contains(".")) {
                     value2String += ".";
@@ -251,7 +240,7 @@ public class Calculator {
                 }
             }
 
-            // If there's only one value, add a decimal to that one
+            // If there's only one value in the register, add a decimal to that one
             else if (value1String != "") {
                 if (!value1String.contains(".") && operator == 'n') {
                     value1String += ".";
@@ -268,7 +257,7 @@ public class Calculator {
                     display.setText(value2String);
                 }
             } 
-            // If there are no values yet, create a new one starting with a decimal
+            // If there are no values in the register yet, create a new one starting with a decimal
             else {
                 value1String = "0.";
                 newValue = Double.parseDouble(value1String);
@@ -281,44 +270,31 @@ public class Calculator {
     class PercentButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
 
-            // If there are two values, convert the second one to a percent
+            // If there are two values in the register, convert the second one to a percent
             if (value2 != null) {
                 value2 = value2 / 100;
 
                 // Format the value to remove unecessary decimal points and zeros
-                if (value2 % 1 == 0) {
-                    value2String = String.format("%.0f", value2);
-                } else {
-                    value2String = String.format("%.10f", value2);
-                    value2 = round(value2, 10);
-                    value2String = value2.toString();
-                }
-
+                formatValue(2);
                 display.setText(value2String);
             }
-            // If there's only one value, convert that one to a percent
+            // If there's only one value in the register, convert that one to a percent
             else if (value1 != null) {
                 value1 = value1 / 100;
 
                 // Format the value to remove unecessary decimal points and zeros
-                if (value1 % 1 == 0) {
-                    value1String = String.format("%.0f", value1);
-                } else {
-                    value1String = String.format("%.10f", value1);
-                    value1 = round(value1, 10);
-                    value1String = value1.toString();
-                }
+                formatValue(1);
                 display.setText(value1String);
             }
         }
     }
-
+    
     class OperationButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             JButton button = (JButton)(event.getSource());
     
-            // If there are two values already, evaluate them and set value2
-            // to null to allow for the next value to be input
+            // If there are two values in the register already, evaluate them and
+            // set value2 to null to allow for the next value to be input
             if (value2 != null) {
 
                 switch (operator) {
@@ -334,15 +310,9 @@ public class Calculator {
                 } 
 
                 // Format the value to remove unecessary decimal points and zeros
-                if (value1 % 1 == 0) {
-                    value1String = String.format("%.0f", value1);
-                } else {
-                    value1String = String.format("%.10f", value1);
-                    value1 = round(value1, 10);
-                    value1String = value1.toString();
-                }
-
+                formatValue(1);
                 display.setText(value1String);
+
                 value2 = null;
                 value2String = "";
             }
@@ -354,8 +324,8 @@ public class Calculator {
     class EvaluateButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
 
-            // If there are two values already, evaluate them and set value2
-            // to null to allow for the next value to be input
+            // If there are two values in the register already, evaluate them and
+            // set value2 to null to allow for the next value to be input
             if (value1 != null && value2 != null) {
                 switch (operator) {
                     case '+':   value1 = value1 + value2;
@@ -369,7 +339,7 @@ public class Calculator {
                     default:    break;
                 } 
             }
-            // If there is only one value, evaluate the first value against itself
+            // If there is only one value in the register, evaluate the first value against itself
             else if (value1 != null && value2 == null) {
                 switch (operator) {
                     case '+':   value1 = value1 + value1;
@@ -386,14 +356,7 @@ public class Calculator {
 
             // Format the value to remove unecessary decimal points and zeros
             if (value1 != null) {
-                if (value1 % 1 == 0) {
-                    value1String = String.format("%.0f", value1);
-                } else {
-                    value1String = String.format("%.10f", value1);
-                    value1 = round(value1, 10);
-                    value1String = value1.toString();
-                }
-
+                formatValue(1);
                 display.setText(value1String);
             } else {
                 display.setText("0");
@@ -411,5 +374,25 @@ public class Calculator {
         BigDecimal bd = new BigDecimal(Double.toString(value));
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
+    }
+
+    private void formatValue(int value) {
+        if (value == 1) {
+            if (value1 % 1 == 0) {
+                value1String = String.format("%.0f", value1);
+            } else {
+                value1String = String.format("%.10f", value1);
+                value1 = round(value1, 10);
+                value1String = value1.toString();
+            }
+        } else {
+            if (value2 % 1 == 0) {
+                value2String = String.format("%.0f", value2);
+            } else {
+                value2String = String.format("%.10f", value2);
+                value2 = round(value2, 10);
+                value2String = value2.toString();
+            }
+        }
     }
 }
